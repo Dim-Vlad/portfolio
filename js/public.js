@@ -23,8 +23,6 @@ function hydrateHero() {
   if (mail && cfg.OWNER_EMAIL) mail.href = "mailto:" + cfg.OWNER_EMAIL;
   const brandName = document.getElementById("brand-name");
   if (brandName && cfg.OWNER_NAME) brandName.textContent = cfg.OWNER_NAME;
-  const logo = document.getElementById("brand-logo");
-  if (logo && cfg.OWNER_NAME) logo.textContent = initials(cfg.OWNER_NAME);
 }
 function setText(id, v) { const el = document.getElementById(id); if (el && v) el.textContent = v; }
 function initials(name) {
