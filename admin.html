@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace privé — Portfolio</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236c8cff'/><text x='50' y='68' font-size='54' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>D</text></svg>" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a href="index.html" class="brand">
+        <span class="logo">D</span>
+        <span class="full">Espace privé</span>
+      </a>
+      <div class="nav-actions" id="dash-nav" style="display:none">
+        <span style="color:var(--text-dim);font-size:.85rem" id="admin-email"></span>
+        <a class="btn btn-ghost" href="index.html" target="_blank">Voir le site ↗</a>
+        <button class="btn btn-ghost" id="logout-btn">Déconnexion</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Vue connexion -->
+  <main class="container">
+    <div id="auth-view" class="auth-wrap"></div>
+
+    <!-- Vue tableau de bord -->
+    <section id="dash-view" style="display:none; padding: 36px 0 60px;">
+      <div class="section-head">
+        <div>
+          <h2>Mes projets</h2>
+          <p>Ajoutez, modifiez ou supprimez vos réalisations. Les changements sont visibles immédiatement sur le portfolio.</p>
+        </div>
+        <button class="btn btn-primary" id="add-btn">+ Nouveau projet</button>
+      </div>
+      <div class="grid" id="admin-list"></div>
+    </section>
+  </main>
+
+  <!-- Modale -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">Nouveau projet</h3>
+        <button class="btn btn-icon btn-ghost" id="modal-close" aria-label="Fermer">✕</button>
+      </div>
+      <form id="project-form">
+        <div class="modal-body">
+          <div class="field">
+            <label for="f-title">Titre *</label>
+            <input id="f-title" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-category">Catégorie</label>
+              <input id="f-category" list="cat-list" placeholder="Application, Site web…" />
+              <datalist id="cat-list">
+                <option value="Application"></option>
+                <option value="Site web"></option>
+                <option value="Outil"></option>
+                <option value="Jeu"></option>
+              </datalist>
+            </div>
+            <div class="field">
+              <label for="f-order">Ordre d'affichage</label>
+              <input id="f-order" type="number" value="0" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-description">Description</label>
+            <textarea id="f-description" placeholder="En quelques phrases, de quoi s'agit-il ?"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-tags">Technologies (séparées par des virgules)</label>
+            <input id="f-tags" placeholder="React, Supabase, PHP…" />
+          </div>
+          <div class="field">
+            <label>Image de couverture</label>
+            <button type="button" class="btn btn-ghost" id="upload-btn">Téléverser une image</button>
+            <input type="file" id="f-file" accept="image/*" hidden />
+            <input id="f-image" placeholder="…ou collez une URL d'image" style="margin-top:10px" />
+            <div id="img-preview"></div>
+            <div class="hint">Formats conseillés : JPG/PNG/WebP, ratio 16:9.</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-live">Lien du projet (en ligne)</label>
+              <input id="f-live" type="url" placeholder="https://…" />
+            </div>
+            <div class="field">
+              <label for="f-repo">Lien du code (repo)</label>
+              <input id="f-repo" type="url" placeholder="https://github.com/…" />
+            </div>
+          </div>
+          <div class="field check">
+            <input type="checkbox" id="f-featured" />
+            <label for="f-featured" style="margin:0">Mettre à la une (badge ★)</label>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toasts"></div>
+
+  <script>
+    (function () {
+      try { const s = localStorage.getItem("pf-theme"); if (s) document.documentElement.setAttribute("data-theme", s); } catch (e) {}
+    })();
+    // Affiche la nav du dashboard quand connecté (observé via classe sur body)
+    const obs = new MutationObserver(() => {
+      const dash = document.getElementById("dash-view");
+      document.getElementById("dash-nav").style.display =
+        dash && dash.style.display !== "none" ? "flex" : "none";
+    });
+    obs.observe(document.getElementById("dash-view"), { attributes: true, attributeFilter: ["style"] });
+  </script>
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
