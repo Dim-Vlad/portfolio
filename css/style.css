@@ -306,15 +306,37 @@ img { max-width: 100%; display: block; }
 .card-featured {
   position: absolute;
   top: 12px; left: 12px;
-  background: color-mix(in srgb, var(--bg) 70%, transparent);
-  backdrop-filter: blur(6px);
-  border: 1px solid var(--border);
-  color: var(--accent);
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 5px 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 6px 13px 6px 11px;
   border-radius: 999px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--brand) 80%, transparent),
+              0 0 0 2px color-mix(in srgb, var(--bg) 85%, transparent);
+  z-index: 2;
+}
+.card-featured::before {
+  content: "★";
+  color: #ffd24a;
+  font-size: 0.82rem;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Carte mise en avant */
+.card.is-featured {
+  border-color: color-mix(in srgb, var(--brand) 55%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 35%, transparent),
+              0 14px 40px -24px color-mix(in srgb, var(--brand) 90%, transparent);
+}
+.card.is-featured:hover {
+  border-color: var(--brand);
 }
 .card-body { padding: 20px 20px 22px; display: flex; flex-direction: column; flex: 1; }
 .card-cat {

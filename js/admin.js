@@ -111,7 +111,7 @@ async function refresh() {
           p.image_url
             ? `<div class="card-media"><img src="${esc(p.image_url)}" alt=""></div>`
             : `<div class="card-media placeholder"><span>${esc((p.title || "?").slice(0, 2).toUpperCase())}</span></div>`
-        }${p.featured ? `<span class="card-featured">★ À la une</span>` : ""}</div>
+        }${p.featured ? `<span class="card-featured">À la une</span>` : ""}</div>
         <div class="card-body">
           <div class="card-cat">${esc(p.category || "")}</div>
           <h3>${esc(p.title)}</h3>

@@ -196,7 +196,7 @@ export function cardHTML(p) {
     ? `<div class="card-media"><img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy"></div>`
     : `<div class="card-media placeholder"><span>${esc(initials(p.title || "?"))}</span></div>`;
 
-  const featured = p.featured ? `<span class="card-featured">★ À la une</span>` : "";
+  const featured = p.featured ? `<span class="card-featured">À la une</span>` : "";
   const tags = (p.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
 
   const links = [];
@@ -204,7 +204,7 @@ export function cardHTML(p) {
   if (p.repo_url) links.push(`<a class="card-link" href="${esc(p.repo_url)}" target="_blank" rel="noopener">Code</a>`);
   const linksHTML = links.length ? `<div class="card-links">${links.join("")}</div>` : "";
 
-  return `<article class="card">
+  return `<article class="card${p.featured ? " is-featured" : ""}">
     <div style="position:relative">${media}${featured}</div>
     <div class="card-body">
       ${p.category ? `<div class="card-cat">${esc(p.category)}</div>` : ""}
