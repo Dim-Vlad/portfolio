@@ -360,6 +360,29 @@ img { max-width: 100%; display: block; }
   padding: 0 20px 18px;
 }
 
+/* ---------------- Glisser-déposer (admin) ---------------- */
+.card[draggable] { cursor: default; }
+.card-drag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--brand) 6%, var(--surface));
+  cursor: grab;
+  user-select: none;
+}
+.card-drag:active { cursor: grabbing; }
+.card-drag .grip { font-size: 1rem; letter-spacing: -2px; color: var(--brand); }
+.card.dragging {
+  opacity: 0.55;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+
 /* ---------------- Empty / loading ---------------- */
 .state {
   text-align: center;

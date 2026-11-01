@@ -7,6 +7,7 @@ import {
   fetchProjects,
   saveProject,
   deleteProject,
+  saveOrder,
   uploadImage,
   fetchSettings,
   saveSetting,
@@ -104,7 +105,8 @@ async function refresh() {
   }
   list.innerHTML = projects
     .map(
-      (p) => `<article class="card">
+      (p) => `<article class="card" draggable="true" data-id="${esc(p.id)}">
+        <div class="card-drag" title="Glisser pour réordonner"><span class="grip">⠿</span> Glisser pour déplacer</div>
         <div style="position:relative">${
           p.image_url
             ? `<div class="card-media"><img src="${esc(p.image_url)}" alt=""></div>`
@@ -129,6 +131,82 @@ async function refresh() {
   list.querySelectorAll("[data-del]").forEach((b) =>
     b.addEventListener("click", () => confirmDelete(b.dataset.del))
   );
+
+  setupDragSort(list);
+}
+
+/* ---------- Réordonnancement par glisser-déposer ---------- */
+let dragEl = null;
+let allowDrag = false; // le glisser ne démarre que depuis la poignée
+let dragGlobalsBound = false;
+
+function setupDragSort(list) {
+  if (!dragGlobalsBound) {
+    document.addEventListener("mouseup", () => { allowDrag = false; });
+    dragGlobalsBound = true;
+  }
+  list.querySelectorAll(".card[draggable]").forEach((card) => {
+    const handle = card.querySelector(".card-drag");
+    if (handle) {
+      handle.addEventListener("mousedown", () => { allowDrag = true; });
+      handle.addEventListener("touchstart", () => { allowDrag = true; }, { passive: true });
+    }
+    card.addEventListener("dragstart", (e) => {
+      if (!allowDrag) { e.preventDefault(); return; } // glisser hors poignée → ignoré
+      dragEl = card;
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try { e.dataTransfer.setData("text/plain", card.dataset.id); } catch (_) {}
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      allowDrag = false;
+      const moved = !!dragEl;
+      dragEl = null;
+      if (moved) persistOrder(list);
+    });
+  });
+
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    if (!dragEl) return;
+    const after = cardAfter(list, e.clientX, e.clientY);
+    if (after == null) list.appendChild(dragEl);
+    else if (after !== dragEl) list.insertBefore(dragEl, after);
+  });
+}
+
+function cardAfter(list, x, y) {
+  const cards = [...list.querySelectorAll(".card[draggable]:not(.dragging)")];
+  let best = null;
+  let bestDist = Infinity;
+  for (const c of cards) {
+    const r = c.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    // Avant la carte si le curseur est au-dessus (ligne précédente) ou à gauche sur la même ligne
+    const before = y < cy - 8 || (Math.abs(y - cy) <= r.height / 2 && x < cx);
+    if (before) {
+      const dist = Math.hypot(x - cx, y - cy);
+      if (dist < bestDist) { bestDist = dist; best = c; }
+    }
+  }
+  return best;
+}
+
+async function persistOrder(list) {
+  const ids = [...list.querySelectorAll(".card[draggable]")].map((c) => c.dataset.id);
+  const current = projects.map((p) => String(p.id));
+  if (ids.join("|") === current.join("|")) return; // aucun changement
+  // Réordonne la copie locale selon le nouvel ordre
+  projects = ids.map((id) => projects.find((p) => String(p.id) === String(id))).filter(Boolean);
+  try {
+    await saveOrder(ids);
+    toast("Ordre enregistré", "success");
+  } catch (err) {
+    toast(err.message || "Erreur lors de l'enregistrement de l'ordre", "error");
+    await refresh();
+  }
 }
 
 /* ---------- Modale d'édition ---------- */

@@ -55,6 +55,17 @@ export async function deleteProject(id) {
   if (error) throw error;
 }
 
+/* ---- Réordonnancement : applique l'ordre de la liste d'ids ---- */
+export async function saveOrder(ids) {
+  const results = await Promise.all(
+    ids.map((id, i) =>
+      supabase.from("projects").update({ sort_order: i }).eq("id", id)
+    )
+  );
+  const failed = results.find((r) => r.error);
+  if (failed) throw failed.error;
+}
+
 /* ---- Contenus éditables (À propos, Parcours) ---- */
 export async function fetchSettings() {
   if (!isConfigured) return {};
