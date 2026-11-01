@@ -37,7 +37,11 @@ Portfolio/
 1. Allez sur [supabase.com](https://supabase.com) → **New project** (gratuit).
 2. Une fois créé, ouvrez **SQL Editor → New query**, collez tout le contenu de
    [`supabase/schema.sql`](supabase/schema.sql) puis **Run**.
-   → cela crée la table `projects`, les règles de sécurité, le stockage des images et insère vos 9 projets.
+   → cela crée les tables `projects` et `settings`, les règles de sécurité, le stockage des images
+   et insère vos 9 projets + les contenus « À propos »/« Parcours ».
+
+   > Si vous aviez déjà exécuté une **ancienne** version de `schema.sql` (sans la table `settings`),
+   > lancez en plus, une seule fois, le fichier [`supabase/02-settings.sql`](supabase/02-settings.sql).
 
 ### 2. Créer VOTRE compte (le seul autorisé)
 1. Dans Supabase : **Authentication → Users → Add user → Create new user**.

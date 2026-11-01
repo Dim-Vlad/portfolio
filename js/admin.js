@@ -8,8 +8,13 @@ import {
   saveProject,
   deleteProject,
   uploadImage,
+  fetchSettings,
+  saveSetting,
 } from "./supabase-client.js";
 import { esc } from "./public.js";
+
+const cfg = window.PORTFOLIO_CONFIG || {};
+const DEFAULT_BADGES = ["Autodidacte", "Applications web", "Sites sur mesure", "Outils métier", "Flutter / Mobile"];
 
 const $ = (id) => document.getElementById(id);
 const authView = $("auth-view");
@@ -211,6 +216,76 @@ async function confirmDelete(id) {
   }
 }
 
+/* ---------- Éditeur Présentation & parcours ---------- */
+async function openContentModal() {
+  const overlay = $("content-modal");
+  overlay.classList.add("open");
+  let settings = {};
+  try {
+    settings = await fetchSettings();
+  } catch (e) {
+    toast(e.message || "Impossible de charger les contenus", "error");
+  }
+  const about = settings.about || {};
+  const parcours = settings.parcours || {};
+
+  const paragraphs = (Array.isArray(about.paragraphs) && about.paragraphs.length ? about.paragraphs : cfg.OWNER_ABOUT) || [];
+  const badges = (Array.isArray(about.badges) && about.badges.length ? about.badges : DEFAULT_BADGES) || [];
+  const facts = (Array.isArray(parcours.facts) && parcours.facts.length ? parcours.facts : cfg.OWNER_FACTS) || [];
+
+  $("c-paragraphs").value = paragraphs.join("\n\n");
+  $("c-badges").value = badges.join(", ");
+  $("c-facts").innerHTML = "";
+  if (facts.length) facts.forEach(addFactRow);
+  else addFactRow();
+}
+
+function addFactRow(fact = {}) {
+  const row = document.createElement("div");
+  row.className = "fact-edit";
+  row.innerHTML = `
+    <input class="fact-ico-in" maxlength="4" placeholder="🎓" value="${esc(fact.icon || "")}" />
+    <input class="fact-label-in" placeholder="Intitulé" value="${esc(fact.label || "")}" />
+    <input class="fact-value-in" placeholder="Valeur" value="${esc(fact.value || "")}" />
+    <button type="button" class="fact-del" title="Supprimer cette ligne">✕</button>`;
+  row.querySelector(".fact-del").addEventListener("click", () => row.remove());
+  $("c-facts").appendChild(row);
+}
+
+function closeContentModal() { $("content-modal").classList.remove("open"); }
+
+async function handleContentSubmit(e) {
+  e.preventDefault();
+  const btn = $("content-save");
+  btn.disabled = true;
+  btn.textContent = "Enregistrement…";
+
+  const paragraphs = $("c-paragraphs").value
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const badges = $("c-badges").value.split(",").map((b) => b.trim()).filter(Boolean);
+  const facts = [...$("c-facts").querySelectorAll(".fact-edit")]
+    .map((row) => ({
+      icon: row.querySelector(".fact-ico-in").value.trim(),
+      label: row.querySelector(".fact-label-in").value.trim(),
+      value: row.querySelector(".fact-value-in").value.trim(),
+    }))
+    .filter((f) => f.label || f.value);
+
+  try {
+    await saveSetting("about", { paragraphs, badges });
+    await saveSetting("parcours", { facts });
+    toast("Présentation mise à jour", "success");
+    closeContentModal();
+  } catch (err) {
+    toast(err.message || "Erreur d'enregistrement", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Enregistrer";
+  }
+}
+
 /* ---------- Toast ---------- */
 function toast(msg, type = "") {
   const stack = $("toasts");
@@ -231,5 +306,14 @@ if (isConfigured) {
   $("project-form").addEventListener("submit", handleSubmit);
   $("upload-btn").addEventListener("click", () => $("f-file").click());
   $("f-file").addEventListener("change", handleUpload);
+
+  // Éditeur Présentation & parcours
+  $("edit-content-btn").addEventListener("click", openContentModal);
+  $("content-close").addEventListener("click", closeContentModal);
+  $("content-cancel").addEventListener("click", closeContentModal);
+  $("content-modal").addEventListener("click", (e) => { if (e.target === $("content-modal")) closeContentModal(); });
+  $("c-add-fact").addEventListener("click", () => addFactRow());
+  $("content-form").addEventListener("submit", handleContentSubmit);
+
   initAuth();
 }

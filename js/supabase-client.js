@@ -55,6 +55,23 @@ export async function deleteProject(id) {
   if (error) throw error;
 }
 
+/* ---- Contenus éditables (À propos, Parcours) ---- */
+export async function fetchSettings() {
+  if (!isConfigured) return {};
+  const { data, error } = await supabase.from("settings").select("key,value");
+  if (error) throw error;
+  const out = {};
+  (data || []).forEach((row) => { out[row.key] = row.value; });
+  return out;
+}
+
+export async function saveSetting(key, value) {
+  const { error } = await supabase
+    .from("settings")
+    .upsert({ key, value, updated_at: new Date().toISOString() });
+  if (error) throw error;
+}
+
 /* ---- Upload d'une image de couverture ---- */
 export async function uploadImage(file) {
   const ext = (file.name.split(".").pop() || "png").toLowerCase();

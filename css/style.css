@@ -443,6 +443,20 @@ img { max-width: 100%; display: block; }
 .check { display: flex; align-items: center; gap: 10px; }
 .check input { width: auto; }
 
+/* Éditeur de parcours (lignes dynamiques) */
+.fact-edit { display: grid; grid-template-columns: 56px 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+.fact-edit input { padding: 9px 11px; }
+.fact-edit .fact-ico-in { text-align: center; }
+.fact-edit .fact-del {
+  border: 1px solid var(--border); background: transparent; color: var(--danger);
+  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 1rem;
+}
+.fact-edit .fact-del:hover { background: color-mix(in srgb, var(--danger) 14%, transparent); }
+@media (max-width: 560px) {
+  .fact-edit { grid-template-columns: 48px 1fr auto; }
+  .fact-edit .fact-value-in { grid-column: 2 / 3; }
+}
+
 /* Login card */
 .auth-wrap { min-height: 72vh; display: grid; place-items: center; padding: 40px 0; }
 .auth-card {

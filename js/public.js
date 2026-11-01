@@ -1,7 +1,9 @@
 /* =========================================================
    Page publique : rendu de la grille, filtres, recherche
    ========================================================= */
-import { fetchProjects, isConfigured } from "./supabase-client.js";
+import { fetchProjects, fetchSettings, isConfigured } from "./supabase-client.js";
+
+const DEFAULT_BADGES = ["Autodidacte", "Applications web", "Sites sur mesure", "Outils métier", "Flutter / Mobile"];
 
 const cfg = window.PORTFOLIO_CONFIG || {};
 let allProjects = [];
@@ -29,28 +31,34 @@ function initials(name) {
   return name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 }
 
-/* ---- Section À propos ---- */
-function hydrateAbout() {
+/* ---- Section À propos (contenu Supabase, repli sur config.js) ---- */
+function hydrateAbout(settings = {}) {
+  const about = settings.about || {};
+  const parcours = settings.parcours || {};
+
+  const paragraphs = Array.isArray(about.paragraphs) && about.paragraphs.length ? about.paragraphs : cfg.OWNER_ABOUT || [];
+  const badges = Array.isArray(about.badges) && about.badges.length ? about.badges : DEFAULT_BADGES;
+  const facts = Array.isArray(parcours.facts) && parcours.facts.length ? parcours.facts : cfg.OWNER_FACTS || [];
+
   const textEl = document.getElementById("about-text");
-  if (textEl && Array.isArray(cfg.OWNER_ABOUT)) {
-    const paras = cfg.OWNER_ABOUT.map((p) => `<p>${esc(p)}</p>`).join("");
-    const badges = `<div class="badges">
-      <span class="badge">Autodidacte</span>
-      <span class="badge">Applications web</span>
-      <span class="badge">Sites sur mesure</span>
-      <span class="badge">Outils métier</span>
-      <span class="badge">Flutter / Mobile</span>
-    </div>`;
-    textEl.innerHTML = paras + badges;
+  if (textEl) {
+    const paras = paragraphs.map((p) => `<p>${esc(p)}</p>`).join("");
+    const badgeHTML = badges.length
+      ? `<div class="badges">${badges.map((b) => `<span class="badge">${esc(b)}</span>`).join("")}</div>`
+      : "";
+    textEl.innerHTML = paras + badgeHTML;
   }
+
   const factsEl = document.getElementById("about-facts");
-  if (factsEl && Array.isArray(cfg.OWNER_FACTS)) {
-    factsEl.innerHTML = cfg.OWNER_FACTS.map(
-      (f) => `<div class="fact">
+  if (factsEl) {
+    factsEl.innerHTML = facts
+      .map(
+        (f) => `<div class="fact">
         <span class="fact-ico">${esc(f.icon || "•")}</span>
         <div><div class="fact-label">${esc(f.label)}</div><div class="fact-value">${esc(f.value)}</div></div>
       </div>`
-    ).join("");
+      )
+      .join("");
   }
 }
 
@@ -120,9 +128,15 @@ function socialLink(name, href, key) {
 /* ---- Chargement ---- */
 async function load() {
   hydrateHero();
-  hydrateAbout();
   setupContact();
   showSkeletons();
+  let settings = {};
+  try {
+    settings = await fetchSettings();
+  } catch (e) {
+    console.warn("Settings indisponibles, repli sur la config locale.", e);
+  }
+  hydrateAbout(settings);
   try {
     allProjects = await fetchProjects();
   } catch (e) {

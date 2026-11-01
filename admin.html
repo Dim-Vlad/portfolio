@@ -32,6 +32,15 @@
 
     <!-- Vue tableau de bord -->
     <section id="dash-view" style="display:none; padding: 36px 0 60px;">
+      <!-- Présentation & parcours -->
+      <div class="about-card" style="margin-bottom:34px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h3 style="margin:0 0 4px">Présentation &amp; parcours</h3>
+          <p style="margin:0;color:var(--text-dim);font-size:.9rem">Modifiez le texte « À propos », vos compétences et votre parcours.</p>
+        </div>
+        <button class="btn btn-ghost" id="edit-content-btn" style="width:auto;margin:0">✎ Modifier</button>
+      </div>
+
       <div class="section-head">
         <div>
           <h2>Mes projets</h2>
@@ -106,6 +115,39 @@
         <div class="modal-foot">
           <button type="button" class="btn btn-ghost" id="modal-cancel">Annuler</button>
           <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modale : Présentation & parcours -->
+  <div class="modal-overlay" id="content-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Présentation &amp; parcours</h3>
+        <button class="btn btn-icon btn-ghost" id="content-close" aria-label="Fermer">✕</button>
+      </div>
+      <form id="content-form">
+        <div class="modal-body">
+          <div class="field">
+            <label for="c-paragraphs">Texte « À propos »</label>
+            <textarea id="c-paragraphs" style="min-height:140px" placeholder="Un paragraphe par ligne…"></textarea>
+            <div class="hint">Laissez une ligne vide entre deux paragraphes (chaque bloc devient un paragraphe).</div>
+          </div>
+          <div class="field">
+            <label for="c-badges">Compétences (badges, séparés par des virgules)</label>
+            <input id="c-badges" placeholder="Autodidacte, Applications web, Flutter / Mobile…" />
+          </div>
+          <div class="field">
+            <label>Parcours</label>
+            <div id="c-facts"></div>
+            <button type="button" class="btn btn-ghost" id="c-add-fact" style="margin-top:8px">+ Ajouter une ligne</button>
+            <div class="hint">Icône (emoji) · intitulé · valeur. Ex. 🎓 · STUDI — Graduate Développeur Flutter · 2023 – 2029</div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="content-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="content-save">Enregistrer</button>
         </div>
       </form>
     </div>
