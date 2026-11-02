@@ -155,9 +155,6 @@
   <div class="toast-stack" id="toasts"></div>
 
   <script>
-    (function () {
-      try { const s = localStorage.getItem("pf-theme"); if (s) document.documentElement.setAttribute("data-theme", s); } catch (e) {}
-    })();
     // Affiche la nav du dashboard quand connecté (observé via classe sur body)
     const obs = new MutationObserver(() => {
       const dash = document.getElementById("dash-view");
