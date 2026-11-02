@@ -105,8 +105,6 @@ let projects = [];
 async function showDashboard() {
   authView.style.display = "none";
   dashView.style.display = "block";
-  const { data } = await supabase.auth.getUser();
-  $("admin-email").textContent = data.user?.email || "";
   await refresh();
 }
 

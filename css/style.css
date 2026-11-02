@@ -140,6 +140,13 @@ img { max-width: 100%; display: block; }
   filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--brand) 45%, transparent));
 }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
+/* Boutons de l'en-tête : intégrés au bandeau vitré */
+.site-header .nav-actions .btn-ghost { border-color: transparent; color: var(--text-soft); }
+.site-header .nav-actions .btn-ghost:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border-color: var(--glass-brd);
+}
 
 .btn {
   --b: var(--surface-2);
@@ -154,6 +161,7 @@ img { max-width: 100%; display: block; }
   font: inherit;
   font-weight: 600;
   font-size: 0.9rem;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -481,30 +489,46 @@ img { max-width: 100%; display: block; }
   background: color-mix(in srgb, #000 55%, transparent);
   backdrop-filter: blur(6px);
   display: none;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 40px 18px;
+  padding: 24px 16px;
   overflow-y: auto;
 }
 .modal-overlay.open { display: flex; }
 .modal {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 560px;
+  max-height: calc(100dvh - 48px);
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-brd);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), var(--glow-cyan);
   animation: pop 0.2s ease;
+  overflow: hidden;
 }
 @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
 .modal-head {
+  flex: 0 0 auto;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 24px;
+  gap: 12px;
+  padding: 20px 22px;
   border-bottom: 1px solid var(--border);
 }
 .modal-head h3 { margin: 0; font-size: 1.2rem; }
-.modal-body { padding: 24px; }
-.modal-foot { padding: 18px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+/* Le <form> enveloppe le corps + le pied : il doit remplir la hauteur restante */
+.modal > form { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.modal-body { flex: 1 1 auto; min-height: 0; padding: 22px; overflow-y: auto; }
+.modal-foot {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--surface);
+}
 
 /* ---------------- Forms ---------------- */
 .field { margin-bottom: 16px; }
@@ -710,12 +734,23 @@ img { max-width: 100%; display: block; }
   .about-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
+  .container { padding: 0 18px; }
   .hero { padding: 60px 0 40px; }
   .hero-stats { gap: 24px; }
   .grid { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; }
+  .nav { height: 62px; }
   .nav .brand span.full { display: none; }
-  .nav-actions .btn-ghost[href="#projets"] { display: none; }
+  .nav-actions { gap: 7px; }
+  /* Masque les liens d'ancrage du portfolio (À propos, Projets) sur mobile */
+  .nav-actions a.btn-ghost[href^="#"] { display: none; }
+  /* Compacte les boutons de l'en-tête pour qu'ils tiennent à l'écran */
+  .site-header .nav-actions .btn { padding: 8px 12px; font-size: 0.82rem; }
+  .site-header .nav-actions .btn-icon { padding: 8px; }
+}
+@media (max-width: 380px) {
+  .site-header .nav-actions .btn { padding: 7px 10px; font-size: 0.78rem; }
+  .nav-actions { gap: 6px; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
