@@ -214,6 +214,11 @@ img { max-width: 100%; display: block; }
   font-weight: 800;
 }
 .hero h1 .grad {
+  font-family: "Caveat", "Inter", cursive;
+  font-weight: 700;
+  font-size: 1.28em;
+  letter-spacing: 0;
+  line-height: 1;
   background: linear-gradient(120deg, var(--brand), var(--brand-2) 55%, var(--accent));
   -webkit-background-clip: text;
   background-clip: text;
