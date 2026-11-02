@@ -21,6 +21,10 @@ const $ = (id) => document.getElementById(id);
 const authView = $("auth-view");
 const dashView = $("dash-view");
 
+/* Icônes œil (afficher / masquer le mot de passe) */
+const ICON_EYE = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const ICON_EYE_OFF = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
 /* ---------- Garde-fou : Supabase requis ---------- */
 if (!isConfigured) {
   authView.innerHTML = `<div class="auth-card">
@@ -57,12 +61,28 @@ function showAuth() {
       </div>
       <div class="field">
         <label for="password">Mot de passe</label>
-        <input type="password" id="password" required autocomplete="current-password" />
+        <div class="password-wrap">
+          <input type="password" id="password" required autocomplete="current-password" />
+          <button type="button" class="password-toggle" id="pw-toggle" aria-label="Afficher le mot de passe" aria-pressed="false" title="Afficher le mot de passe">${ICON_EYE}</button>
+        </div>
       </div>
       <button class="btn btn-primary" type="submit" id="login-btn" style="width:100%;justify-content:center">Se connecter</button>
     </form>
     <p style="margin-top:18px;text-align:center"><a href="index.html" style="color:var(--text-dim);font-size:.88rem">← Retour au portfolio</a></p>
   </div>`;
+
+  $("pw-toggle").addEventListener("click", () => {
+    const input = $("password");
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    const tgl = $("pw-toggle");
+    tgl.innerHTML = show ? ICON_EYE_OFF : ICON_EYE;
+    tgl.setAttribute("aria-pressed", String(show));
+    const label = show ? "Masquer le mot de passe" : "Afficher le mot de passe";
+    tgl.setAttribute("aria-label", label);
+    tgl.setAttribute("title", label);
+    input.focus();
+  });
 
   $("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
