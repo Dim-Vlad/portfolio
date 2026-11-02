@@ -73,8 +73,6 @@ function setupContact() {
 
   setText("contact-name", cfg.OWNER_NAME);
   setText("contact-role", cfg.OWNER_ROLE);
-  const ini = document.getElementById("contact-initials");
-  if (ini && cfg.OWNER_NAME) ini.textContent = initials(cfg.OWNER_NAME);
 
   // Lignes de contact
   const rows = [];

@@ -688,11 +688,9 @@ img { max-width: 100%; display: block; }
 }
 .contact-avatar {
   width: 56px; height: 56px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  display: grid; place-items: center;
-  color: #fff; font-weight: 800; font-size: 1.3rem;
-  box-shadow: 0 10px 24px -10px var(--brand);
+  object-fit: contain;
+  display: block; flex: 0 0 auto;
+  filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--brand) 50%, transparent));
 }
 .contact-head .who h3 { margin: 0; font-size: 1.15rem; }
 .contact-head .who span { color: var(--text-soft); font-size: 0.9rem; }
